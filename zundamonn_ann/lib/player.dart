@@ -16,6 +16,7 @@ class _PlaybackPageState extends State<PlaybackPage> {
 
   Future<void> _playAudio() async {
     if (!isPlaying) {
+      // TODO: iOSでの再生に対応時にエラーが生じる
       await widget.audioPlayer.setAudioSource(AudioSource.uri(
         Uri.dataFromBytes(widget.audioData, mimeType: 'audio/x-wav'),
       ));
