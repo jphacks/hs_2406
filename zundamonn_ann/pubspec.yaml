@@ -1,5 +1,5 @@
-name: test_flutter
-description: "A new Flutter project."
+name: zundamonn_ann
+description: "ずんだもんのオールナイトニッポン"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -27,3 +27,4 @@ flutter:
   # assets エントリを追加してアセット画像のパスを指定
   assets:
     - assets/images/zundamon.jpg
+    - .env
