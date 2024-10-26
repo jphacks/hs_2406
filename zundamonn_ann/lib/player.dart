@@ -56,19 +56,21 @@ class _PlaybackPageState extends State<PlaybackPage> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start, // 上寄せ
           children: [
-            Expanded(
+            Container(
+              height: 600, // 画像の高さを固定
               child: Image.asset(
                 'assets/images/zundamon.jpg', // 画像のパス
                 fit: BoxFit.contain,
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10), // 画像とボタンの間のスペースを小さくする
             ElevatedButton(
               onPressed: _playAudio, // 再生ボタン
               child: Text('再生'),
             ),
+            SizedBox(height: 5), // ボタン間のスペース
             ElevatedButton(
               onPressed: () {
                 widget.audioPlayer.stop(); // 停止ボタン
