@@ -56,8 +56,10 @@
 - 利用手順
 
     1. ユーザーは「ラジオを聴く」か「メールを送る」を選択
+
        <img src="https://github.com/user-attachments/assets/a165d837-6540-45de-9eac-b4e79bf40bae" width="25%">
-    2. 
+       
+    3. 
 
 自動音声として[VOICEBOX](https://voicevox.hiroshiba.jp/)を使用する 
 ### 特長
