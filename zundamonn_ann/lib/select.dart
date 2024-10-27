@@ -21,32 +21,16 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
       TextEditingController();
 
   final List<String> categories = [
-    "リラックス",
-    "エネルギッシュ",
+    "お笑い",
     "集中",
     "冒険",
-    "学習",
-    "幸せ",
-    "感動",
     "楽しい",
-    "悲しい",
     "ロマンチック",
     "感謝",
     "刺激",
-    "リフレッシュ",
-    "癒し",
-    "ノスタルジック",
     "穏やか",
-    "チャレンジ",
-    "情熱的",
-    "創造的",
     "平和",
     "おしゃれ",
-    "クール",
-    "ミステリアス",
-    "エレガント",
-    "落ち着き",
-    "憂鬱",
     "わくわく"
   ];
 
@@ -74,7 +58,7 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
     }
   }
 
-  Future<List<List<int>>> _callApi(String text) async {
+  Future<List<List<int>>> callVoiceApi(String text) async {
     final maxTextLength = 300;
     _audioDataList.clear();
     await dotenv.load(fileName: '.env');
@@ -210,7 +194,7 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
 
                       final script = await _fetchScript(selectedCategories);
                       if (script != null) {
-                        final audioDataLst = await _callApi(script);
+                        final audioDataLst = await callVoiceApi(script);
                         setState(() {
                           _isLoading = false;
                         });

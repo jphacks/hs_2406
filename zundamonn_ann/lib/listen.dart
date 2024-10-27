@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'select.dart'; // select.dartをインポート
-import 'send_mail.dart'; // send_mail.dartをインポート
+import 'mail.dart'; // send_mail.dartをインポート
 
 class ListenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('選択してください'),
+        title: Text('ずんだもんのオールナイトニッポン！'),
       ),
       body: Center(
         child: Column(
@@ -23,7 +23,7 @@ class ListenPage extends StatelessWidget {
                   ),
                 );
               },
-              child: Text('ラジオを聴く'),
+              child: Text('📻 ラジオを聴く'),
             ),
             SizedBox(height: 20),
             ElevatedButton(
@@ -36,7 +36,7 @@ class ListenPage extends StatelessWidget {
                   ),
                 );
               },
-              child: Text('メールを送る'),
+              child: Text('📩 メールを送る'),
             ),
           ],
         ),
