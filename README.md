@@ -1,5 +1,6 @@
 # 「ずんだもんのオールナイトニッポン」
 
+![ずんだもんのオールナイトニッポン](https://github.com/user-attachments/assets/330f1db9-9246-4bd3-9c15-f13e915f213e)
 
 [![IMAGE ALT TEXT HERE](https://jphacks.com/wp-content/uploads/2024/07/JPHACKS2024_ogp.jpg)](https://www.youtube.com/watch?v=DZXUkEj-CSI)
 
