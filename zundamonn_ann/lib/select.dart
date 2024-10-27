@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
-
 import 'player.dart';
 
 class MoodSelectionPage extends StatefulWidget {
@@ -13,40 +12,51 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
   TextEditingController _textController = TextEditingController();
   String _response = "ボタンを押してAPIを呼び出してください";
   AudioPlayer _audioPlayer = AudioPlayer();
-  List<int>? _audioData; // 音声データを保持
+  List<List<int>> _audioDataList = []; // 音声データを保持するリスト
 
   Future<void> _callApi(String text) async {
-    final requestUrl =
-        'https://deprecatedapis.tts.quest/v2/voicevox/audio/?key=i_43z4K2Z_K_020&speaker=0&pitch=0&intonationScale=1&speed=1&text=${Uri.encodeComponent(text)}';
+    final maxTextLength = 300; // APIに渡すテキストの最大長さ
+    _audioDataList.clear();
 
-    try {
-      final response = await http.get(Uri.parse(requestUrl));
-      print('ステータスコード: ${response.statusCode}');
+    // テキストを分割して順にリクエストを送信
+    for (int i = 0; i < text.length; i += maxTextLength) {
+      final part = text.substring(
+          i,
+          (i + maxTextLength) > text.length
+              ? text.length
+              : (i + maxTextLength));
+      final requestUrl =
+          'https://deprecatedapis.tts.quest/v2/voicevox/audio/?key=i_43z4K2Z_K_020&speaker=0&pitch=0&intonationScale=1&speed=1&text=${Uri.encodeComponent(part)}';
 
-      if (response.statusCode == 200) {
-        // 音声データをバイト配列として取得
-        _audioData = response.bodyBytes;
+      try {
+        final response = await http.get(Uri.parse(requestUrl));
+        print('ステータスコード: ${response.statusCode}');
 
-        // 2ページ目に移動
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PlaybackPage(
-              audioPlayer: _audioPlayer,
-              audioData: _audioData!,
-            ),
-          ),
-        );
-      } else {
+        if (response.statusCode == 200) {
+          // 音声データをバイト配列として取得してリストに追加
+          _audioDataList.add(response.bodyBytes);
+        } else {
+          setState(() {
+            _response = "データの読み込みに失敗しました: ${response.statusCode}";
+          });
+        }
+      } catch (e) {
         setState(() {
-          _response = "データの読み込みに失敗しました: ${response.statusCode}";
+          _response = "エラー: $e";
         });
       }
-    } catch (e) {
-      setState(() {
-        _response = "エラー: $e";
-      });
     }
+
+    // 全てのリクエストが完了したら次のページへ遷移
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PlaybackPage(
+          audioPlayer: _audioPlayer,
+          audioDataList: _audioDataList,
+        ),
+      ),
+    );
   }
 
   @override
