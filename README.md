@@ -109,22 +109,19 @@
 ### 活用した技術
 #### API・データ
 * Gemini API 
-* 
+* VOICEVOX API 
 
 #### フレームワーク・ライブラリ・モジュール
 * Backend 
 
-    * Firebase 
+    * Firebase
 
-    * Gemini API 
 * Frontend 
 
     * Flutter 
 
-    * VOICEVOX API 
-
 #### デバイス
-* 
+* Android / iOS / Chrome
 * 
 
 ### 独自技術
