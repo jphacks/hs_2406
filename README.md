@@ -81,7 +81,7 @@
 
 - 利用イメージ
 
-    ![ラジオ番組の生成](https://youtu.be/DMBxj0yR3fg)
+    [![ラジオ番組の生成](https://github.com/user-attachments/assets/a25b49df-a9de-452d-87e4-5a94ed8d3e9b)](https://youtu.be/DMBxj0yR3fg)
 
 
 自動音声として[VOICEBOX](https://voicevox.hiroshiba.jp/)を使用する 
