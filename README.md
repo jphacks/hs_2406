@@ -79,9 +79,13 @@
 
             <img src="https://github.com/user-attachments/assets/f98ff281-4669-4f4b-8017-ba2b8d51a23b" width="25%">
 
-- 利用イメージ
+- 利用イメージ（デモ動画）
 
+    - ラジオ番組の生成
     [![ラジオ番組の生成](https://github.com/user-attachments/assets/a25b49df-a9de-452d-87e4-5a94ed8d3e9b)](https://youtu.be/DMBxj0yR3fg)
+
+    - リスナーメールをずんだもんが読み上げる
+    [![リスナーからのメール](https://github.com/user-attachments/assets/4c9a8df5-b34a-4c47-9326-9521c2da54b7)](https://youtu.be/S4cXUOiMQts)
 
 
 自動音声として[VOICEBOX](https://voicevox.hiroshiba.jp/)を使用する 
