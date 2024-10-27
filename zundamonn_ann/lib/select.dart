@@ -17,36 +17,28 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
   AudioPlayer _audioPlayer = AudioPlayer();
   List<int>? _audioData; // 音声データを保持
   bool _isLoading = false; // ローディング状態を管理
+  List<List<int>> _audioDataList = [];
 
   Future<String?> _fetchScript(String category) async {
     final url = Uri.parse('https://generateradio-xjbotcni5q-an.a.run.app');
-
-    // リクエストのボディ
     final body = jsonEncode({
       'category': [category] // 引数を使用してカテゴリを設定
     });
-
     try {
-      // POSTリクエストを送信
       final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: body, // ボディには元の全体を使用
+        body: body,
       );
-
-      // レスポンスのステータスコードをチェック
       if (response.statusCode == 200) {
-        // JSONをデコードし、scriptを取得
         final jsonResponse = jsonDecode(response.body);
         String? script = jsonResponse['script'] as String?;
 
         // スクリプトの最初の30文字を返す
         // TODO: 文字制限の対処方法を考える
-        return script != null && script.length > 30
-            ? script.substring(0, 30)
-            : script;
+        return script;
       } else {
         print('Error: ${response.statusCode}');
         return null;
@@ -57,43 +49,53 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
     }
   }
 
-  Future<List<int>?> _callApi(String text) async {
+  Future<List<List<int>>> _callApi(String text) async {
+    final maxTextLength = 300; // APIに渡すテキストの最大長さ
+    _audioDataList.clear();
     await dotenv.load(fileName: '.env');
     final String apiKey = dotenv.env['VOICEVOX_API_KEY']!;
-    final requestUrl = Uri.https(
-      'deprecatedapis.tts.quest',
-      '/v2/voicevox/audio/',
-      {
-        'key': apiKey,
-        'speaker': '0',
-        'pitch': '0',
-        'intonationScale': '1',
-        'speed': '1',
-        'text': text,
-      },
-    ).toString();
-    print('Request URL: $requestUrl');
 
-    try {
-      final response = await http.get(Uri.parse(requestUrl));
-      print('Response status: ${response.statusCode}');
-      print('Response headers: ${response.headers}');
+    // テキストを分割して順にリクエストを送信
+    for (int i = 0; i < text.length; i += maxTextLength) {
+      final part = text.substring(
+        i,
+        (i + maxTextLength) > text.length ? text.length : (i + maxTextLength),
+      );
+      final requestUrl = Uri.https(
+        'deprecatedapis.tts.quest',
+        '/v2/voicevox/audio/',
+        {
+          'key': apiKey,
+          'speaker': '0',
+          'pitch': '0',
+          'intonationScale': '1',
+          'speed': '1',
+          'text': part,
+        },
+      ).toString();
+      print('Request URL: $requestUrl');
+      try {
+        final response = await http.get(Uri.parse(requestUrl));
+        print('Response status: ${response.statusCode}');
+        print('Response headers: ${response.headers}');
 
-      if (response.statusCode == 200) {
-        // 音声データをバイト配列として取得
-        return response.bodyBytes;
-      } else {
+        if (response.statusCode == 200) {
+          // 音声データをバイト配列として取得
+          _audioDataList.add(response.bodyBytes.toList());
+        } else {
+          setState(() {
+            _response = "データの読み込みに失敗しました: ${response.statusCode}";
+          });
+        }
+      } catch (e) {
         setState(() {
-          _response = "データの読み込みに失敗しました: ${response.statusCode}";
+          _response = "エラー: $e";
         });
-        return null;
       }
-    } catch (e) {
-      setState(() {
-        _response = "エラー: $e";
-      });
-      return null;
     }
+
+    // 必ずリストを返す
+    return _audioDataList;
   }
 
   @override
@@ -134,19 +136,19 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
 
                         // 音声データを取得
                         final script = await _fetchScript(text);
-                        final audioData = await _callApi(script!);
+                        final audioDataLst = await _callApi(script!);
                         setState(() {
                           _isLoading = false; // ローディング終了
                         });
 
-                        if (audioData != null) {
+                        if (_audioDataList != []) {
                           // 2ページ目に移動
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => PlaybackPage(
                                 audioPlayer: _audioPlayer,
-                                audioData: audioData,
+                                audioDataList: audioDataLst,
                               ),
                             ),
                           ).then((_) {
