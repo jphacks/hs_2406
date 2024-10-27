@@ -17,23 +17,9 @@ class _PlaybackPageState extends State<PlaybackPage> {
   bool isPlaying = false; // 再生中かどうかを管理するフラグ
   int _currentIndex = 0;
 
-  Future<void> _playAudio() async {
-    if (!isPlaying) {
-      // TODO: iOSでの再生に対応時にエラーが生じる
-      await widget.audioPlayer.setAudioSource(AudioSource.uri(
-        Uri.dataFromBytes(widget.audioData, mimeType: 'audio/x-wav'),
-      ));
-      await widget.audioPlayer.play();
-      setState(() {
-        isPlaying = true; // 再生中に設定
-      });
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    _playNextAudio(); // 初回の音声を再生
   }
 
   // 次の音声を再生するメソッド
@@ -60,15 +46,6 @@ class _PlaybackPageState extends State<PlaybackPage> {
           });
         }
       }
-      // if (state.playing) {
-      //   setState(() {
-      //     isPlaying = true;
-      //   });
-      // } else {
-      //   setState(() {
-      //     isPlaying = false;
-      //   });
-      // }
     });
   }
 
@@ -108,7 +85,7 @@ class _PlaybackPageState extends State<PlaybackPage> {
             ),
             SizedBox(height: 10), // 画像とボタンの間のスペースを小さくする
             ElevatedButton(
-              onPressed: _playAudio, // 再生ボタン
+              onPressed: _playNextAudio, // 再生ボタン
               child: Text('再生'),
             ),
             SizedBox(height: 5), // ボタン間のスペース
