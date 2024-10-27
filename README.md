@@ -17,6 +17,7 @@
         - 「インターネットやテレビの方が面白い 」
 
 
+
 - ラジオの良さを伝えたい！
 
     - きっかけ
@@ -77,6 +78,10 @@
         2. ずんだもんが回答
 
             <img src="https://github.com/user-attachments/assets/f98ff281-4669-4f4b-8017-ba2b8d51a23b" width="25%">
+
+- 利用イメージ
+
+    [![サービス紹介動画](https://user-images.githubusercontent.com/84756197/173222007-3aefa245-4c0e-45e6-9855-91f0e3be89ed.png)](https://youtu.be/5aKI900iGVo?t=1336)
 
 
 自動音声として[VOICEBOX](https://voicevox.hiroshiba.jp/)を使用する 
