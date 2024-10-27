@@ -12,18 +12,60 @@ class MoodSelectionPage extends StatefulWidget {
 }
 
 class _MoodSelectionPageState extends State<MoodSelectionPage> {
-  TextEditingController _textController = TextEditingController();
   String _response = "ボタンを押してAPIを呼び出してください";
   AudioPlayer _audioPlayer = AudioPlayer();
-  List<int>? _audioData; // 音声データを保持
-  bool _isLoading = false; // ローディング状態を管理
+  bool _isLoading = false;
   List<List<int>> _audioDataList = [];
+  List<String> selectedCategories = []; // 選択されたカテゴリを保持
 
-  Future<String?> _fetchScript(String category) async {
+  final List<String> categories = [
+    "リラックス",
+    "エネルギッシュ",
+    "集中",
+    "冒険",
+    "学習",
+    "幸せ",
+    "感動",
+    "楽しい",
+    "悲しい",
+    "ロマンチック",
+    "感謝",
+    "刺激",
+    "リフレッシュ",
+    "癒し",
+    "ノスタルジック",
+    "穏やか",
+    "チャレンジ",
+    "情熱的",
+    "創造的",
+    "平和",
+    "おしゃれ",
+    "クール",
+    "ミステリアス",
+    "エレガント",
+    "落ち着き",
+    "憂鬱",
+    "わくわく",
+    "眠気",
+    "スリル",
+    "祝福",
+    "思い出",
+    "現実逃避",
+    "懐かしい",
+    "冒険心",
+    "向上心",
+    "自己肯定",
+    "達成感",
+    "笑い",
+    "ドラマチック",
+    "励まし",
+    "成功",
+    "挑戦",
+  ];
+
+  Future<String?> _fetchScript(List<String> categories) async {
     final url = Uri.parse('https://generateradio-xjbotcni5q-an.a.run.app');
-    final body = jsonEncode({
-      'category': [category] // 引数を使用してカテゴリを設定
-    });
+    final body = jsonEncode({'category': categories});
     try {
       final response = await http.post(
         url,
@@ -34,11 +76,7 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
       );
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        String? script = jsonResponse['script'] as String?;
-
-        // スクリプトの最初の30文字を返す
-        // TODO: 文字制限の対処方法を考える
-        return script;
+        return jsonResponse['script'] as String?;
       } else {
         print('Error: ${response.statusCode}');
         return null;
@@ -50,12 +88,19 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
   }
 
   Future<List<List<int>>> _callApi(String text) async {
-    final maxTextLength = 300; // APIに渡すテキストの最大長さ
+    final maxTextLength = 300;
     _audioDataList.clear();
     await dotenv.load(fileName: '.env');
-    final String apiKey = dotenv.env['VOICEVOX_API_KEY']!;
 
-    // テキストを分割して順にリクエストを送信
+    final String? apiKey = dotenv.env['VOICEVOX_API_KEY'];
+    if (apiKey == null) {
+      print("Error: VOICEVOX_API_KEY is not set");
+      setState(() {
+        _response = "エラー: APIキーが設定されていません";
+      });
+      return [];
+    }
+
     for (int i = 0; i < text.length; i += maxTextLength) {
       final part = text.substring(
         i,
@@ -73,14 +118,10 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
           'text': part,
         },
       ).toString();
-      print('Request URL: $requestUrl');
+
       try {
         final response = await http.get(Uri.parse(requestUrl));
-        print('Response status: ${response.statusCode}');
-        print('Response headers: ${response.headers}');
-
         if (response.statusCode == 200) {
-          // 音声データをバイト配列として取得
           _audioDataList.add(response.bodyBytes.toList());
         } else {
           setState(() {
@@ -93,9 +134,17 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
         });
       }
     }
-
-    // 必ずリストを返す
     return _audioDataList;
+  }
+
+  void _toggleCategorySelection(String category) {
+    setState(() {
+      if (selectedCategories.contains(category)) {
+        selectedCategories.remove(category); // 選択解除
+      } else {
+        selectedCategories.add(category); // 選択
+      }
+    });
   }
 
   @override
@@ -114,67 +163,68 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _textController,
-                decoration: InputDecoration(
-                  labelText: '言ってほしい言葉を入力してください',
-                ),
-              ),
+            Wrap(
+              spacing: 10.0,
+              runSpacing: 10.0,
+              children: categories.map((category) {
+                final isSelected = selectedCategories.contains(category);
+                return ElevatedButton(
+                  onPressed: () => _toggleCategorySelection(category),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 4), // 縦幅を小さくする
+                    shape: StadiumBorder(),
+                    elevation: 8,
+                    backgroundColor:
+                        isSelected ? Colors.blueAccent : Colors.grey.shade300,
+                  ),
+                  child: Text(
+                    category,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.black87,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
+            SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _isLoading
-                  ? null // ローディング中はボタンを無効にする
+              onPressed: selectedCategories.isEmpty || _isLoading
+                  ? null
                   : () async {
-                      String text = _textController.text;
-                      if (text.isNotEmpty && _isLoading == false) {
+                      setState(() {
+                        _isLoading = true;
+                        _response = "読み込み中...";
+                      });
+
+                      final script = await _fetchScript(selectedCategories);
+                      if (script != null) {
+                        final audioDataLst = await _callApi(script);
                         setState(() {
-                          _isLoading = true; // ローディング開始
-                          _response = "読み込み中..."; // ローディングメッセージを表示
+                          _isLoading = false;
                         });
 
-                        // 音声データを取得
-                        final script = await _fetchScript(text);
-                        final audioDataLst = await _callApi(script!);
-                        setState(() {
-                          _isLoading = false; // ローディング終了
-                        });
-
-                        if (_audioDataList != []) {
-                          // 2ページ目に移動
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PlaybackPage(
-                                audioPlayer: _audioPlayer,
-                                audioDataList: audioDataLst,
-                              ),
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PlaybackPage(
+                              audioPlayer: _audioPlayer,
+                              audioDataList: audioDataLst,
                             ),
-                          ).then((_) {
-                            // 戻ったときに状態をリセット
-                            _response = "ボタンを押してAPIを呼び出してください";
-                            _isLoading = false;
-                          });
-                        }
+                          ),
+                        );
                       } else {
                         setState(() {
-                          _response = "テキストを入力してください"; // 入力がない場合のメッセージ
+                          _response = "データの取得に失敗しました";
+                          _isLoading = false;
                         });
                       }
                     },
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
-                textStyle: TextStyle(fontSize: 20),
-              ),
-              child: _isLoading
-                  ? CircularProgressIndicator(
-                      color: Colors.white, // インジケーターの色
-                    )
-                  : Text('ラジオを生成'),
+              child: Text("ラジオを生成"),
             ),
             SizedBox(height: 20),
-            Text(_response), // レスポンスメッセージ
+            if (_isLoading) CircularProgressIndicator() else Text(_response),
           ],
         ),
       ),
