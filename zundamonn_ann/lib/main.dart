@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'select.dart';
+import 'listen.dart'; // ListenPageをインポート
 
 void main() {
   runApp(MyApp());
@@ -42,8 +41,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: Colors.green[600],
         ),
       ),
-      home: MoodSelectionPage(),
-      color: Colors.green,
+      home: ListenPage(), // ListenPageを初期画面に設定
       builder: (context, child) {
         return FadeTransition(
           opacity: CurvedAnimation(

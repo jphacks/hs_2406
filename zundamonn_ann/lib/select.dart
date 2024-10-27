@@ -96,7 +96,7 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
     if (apiKey == null) {
       print("Error: VOICEVOX_API_KEY is not set");
       setState(() {
-        _response = "エラー: APIキーが設定されていません";
+        String _response = "エラー: APIキーが設定されていません";
       });
       return [];
     }
