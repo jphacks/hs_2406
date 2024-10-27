@@ -55,13 +55,29 @@
 
 - 利用手順
 
-    1. ユーザーは「ラジオを聴く」か「メールを送る」を選択
+    - ラジオ番組の生成
 
-        <img src="https://github.com/user-attachments/assets/a165d837-6540-45de-9eac-b4e79bf40bae" width="25%">
+        1. ユーザーは「ラジオを聴く」か「メールを送る」を選択
+
+            <img src="https://github.com/user-attachments/assets/a165d837-6540-45de-9eac-b4e79bf40bae" width="25%">
        
-    2. カテゴリーを選択
+        2. カテゴリーを選択
 
-        <img src="[https://github.com/user-attachments/assets/a9a2d9f7-236f-4d40-9993-806146fe71f5" width="25%">
+            <img src="https://github.com/user-attachments/assets/a9a2d9f7-236f-4d40-9993-806146fe71f5" width="25%">
+
+        3. ずんだもんのラジオ番組を視聴
+
+            <img src="https://github.com/user-attachments/assets/f98ff281-4669-4f4b-8017-ba2b8d51a23b" width="25%">
+
+    - リスナーメールの回答
+ 
+        1. ラジオネームとメールを記入
+ 
+            <img src="https://github.com/user-attachments/assets/8310eb09-df96-4491-8658-6b5051097a57" width="25%">
+
+        2. ずんだもんが回答
+
+            <img src="https://github.com/user-attachments/assets/f98ff281-4669-4f4b-8017-ba2b8d51a23b" width="25%">
 
 
 自動音声として[VOICEBOX](https://voicevox.hiroshiba.jp/)を使用する 
