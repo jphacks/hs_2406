@@ -12,11 +12,13 @@ class MoodSelectionPage extends StatefulWidget {
 }
 
 class _MoodSelectionPageState extends State<MoodSelectionPage> {
-  String _response = "ボタンを押してAPIを呼び出してください";
+  String _response = "";
   AudioPlayer _audioPlayer = AudioPlayer();
   bool _isLoading = false;
   List<List<int>> _audioDataList = [];
   List<String> selectedCategories = []; // 選択されたカテゴリを保持
+  final TextEditingController _customCategoryController =
+      TextEditingController();
 
   final List<String> categories = [
     "リラックス",
@@ -45,22 +47,7 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
     "エレガント",
     "落ち着き",
     "憂鬱",
-    "わくわく",
-    "眠気",
-    "スリル",
-    "祝福",
-    "思い出",
-    "現実逃避",
-    "懐かしい",
-    "冒険心",
-    "向上心",
-    "自己肯定",
-    "達成感",
-    "笑い",
-    "ドラマチック",
-    "励まし",
-    "成功",
-    "挑戦",
+    "わくわく"
   ];
 
   Future<String?> _fetchScript(List<String> categories) async {
@@ -147,9 +134,21 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
     });
   }
 
+  void _addCustomCategory() {
+    final customCategory = _customCategoryController.text.trim();
+    if (customCategory.isNotEmpty &&
+        !selectedCategories.contains(customCategory)) {
+      setState(() {
+        selectedCategories.add(customCategory); // 自由記入欄のカテゴリを追加
+        _customCategoryController.clear(); // 入力欄をクリア
+      });
+    }
+  }
+
   @override
   void dispose() {
     _audioPlayer.dispose();
+    _customCategoryController.dispose();
     super.dispose();
   }
 
@@ -189,6 +188,17 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
               }).toList(),
             ),
             SizedBox(height: 20),
+            TextField(
+              controller: _customCategoryController,
+              decoration: InputDecoration(
+                labelText: '自由記入カテゴリ',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: _addCustomCategory,
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: selectedCategories.isEmpty || _isLoading
                   ? null
@@ -225,6 +235,28 @@ class _MoodSelectionPageState extends State<MoodSelectionPage> {
             ),
             SizedBox(height: 20),
             if (_isLoading) CircularProgressIndicator() else Text(_response),
+            SizedBox(height: 20),
+            // 選択されたカテゴリの一覧を表示
+            if (selectedCategories.isNotEmpty) ...[
+              Text(
+                "選択されたカテゴリ:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              Wrap(
+                spacing: 8.0,
+                children: selectedCategories.map((category) {
+                  return Chip(
+                    label: Text(category),
+                    deleteIcon: Icon(Icons.close),
+                    onDeleted: () {
+                      setState(() {
+                        selectedCategories.remove(category);
+                      });
+                    },
+                  );
+                }).toList(),
+              ),
+            ],
           ],
         ),
       ),
